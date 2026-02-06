@@ -3,6 +3,8 @@ import { PlusCircle, ClipboardList, Trash2 } from 'lucide-react';
 import './App.css'; // Импортируем наши новые стили
 
 function App() {
+  const API_URL = 'https://helpdesk-project-djbn.onrender.com/api/tickets';
+
   const [tickets, setTickets] = useState([]);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -11,9 +13,7 @@ function App() {
 
   const fetchTickets = async () => {
     try {
-      const response = await fetch(
-        'https://helpdesk-project-djbn.onrender.com/api/tickets',
-      );
+      const response = await fetch(API_URL);
       const data = await response.json();
       setTickets(data);
     } catch (error) {
@@ -40,7 +40,7 @@ function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:5000/api/tickets', {
+      const response = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title, description, priority }),
@@ -57,7 +57,7 @@ function App() {
 
   const deleteTicket = async (id) => {
     if (window.confirm('Удалить заявку?')) {
-      await fetch(`http://localhost:5000/api/tickets/${id}`, {
+      await fetch(`${API_URL}/${id}`, {
         method: 'DELETE',
       });
       fetchTickets();
