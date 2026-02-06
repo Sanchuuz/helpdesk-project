@@ -21,17 +21,21 @@ function App() {
     }
   };
 
-  // Фильтруем массив, чтобы посчитать количество по категориям
-  const highPriorityCount = tickets.filter((t) => t.priority === 'High').length;
-  const mediumPriorityCount = tickets.filter(
-    (t) => t.priority === 'Medium',
-  ).length;
-  const lowPriorityCount = tickets.filter((t) => t.priority === 'Low').length;
-
   // Фильтруем список в зависимости от того, что введено в поиск
   const filteredTickets = tickets.filter((ticket) =>
     ticket.title.toLowerCase().includes(searchTerm.toLowerCase()),
   );
+
+  // Фильтруем массив, чтобы посчитать количество по категориям
+  const highPriorityCount = filteredTickets.filter(
+    (t) => t.priority === 'High',
+  ).length;
+  const mediumPriorityCount = filteredTickets.filter(
+    (t) => t.priority === 'Medium',
+  ).length;
+  const lowPriorityCount = filteredTickets.filter(
+    (t) => t.priority === 'Low',
+  ).length;
 
   useEffect(() => {
     fetchTickets();
@@ -125,7 +129,7 @@ function App() {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
 
-        <h2>Список заявок ({tickets.length})</h2>
+        <h2>Список заявок ({filteredTickets.length})</h2>
         {filteredTickets.map((ticket) => (
           <div key={ticket._id} className="ticket-card">
             <div
