@@ -4,11 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import './App.css';
 
 function App() {
-  // Автоматическое переключение URL между локалкой и облаком
-  const API_URL =
-    window.location.hostname === 'localhost'
-      ? 'http://localhost:5000/api/tickets'
-      : 'https://helpdesk-project-djbn.onrender.com/api/tickets';
+  const API_URL = 'https://helpdesk-project-djbn.onrender.com/api/tickets';
 
   const [tickets, setTickets] = useState([]);
   const [title, setTitle] = useState('');
