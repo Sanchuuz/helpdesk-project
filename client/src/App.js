@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PlusCircle, ClipboardList, Trash2, Frown } from 'lucide-react';
+import { PlusCircle, ClipboardList, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import './App.css'; // Импортируем наши новые стили
 
