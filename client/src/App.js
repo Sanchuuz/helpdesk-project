@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { PlusCircle, ClipboardList, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import './App.css';
@@ -16,26 +16,20 @@ function App() {
   const [priority, setPriority] = useState('Medium');
   const [searchTerm, setSearchTerm] = useState('');
 
-  const fetchTickets = async () => {
+  const fetchTickets = useCallback(async () => {
     try {
       const response = await fetch(API_URL);
       const data = await response.json();
-
-      if (Array.isArray(data)) {
-        // Сортировка: новые в начало
-        setTickets([...data].reverse());
-      } else {
-        setTickets([]);
-      }
+      setTickets(Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error('Ошибка получения данных:', error);
+      console.error('Ошибка:', error);
       setTickets([]);
     }
-  };
+  }, [API_URL]); // Функция зависит от API_URL
 
   useEffect(() => {
     fetchTickets();
-  }, []);
+  }, [fetchTickets]); // Теперь fetchTickets можно безопасно добавить сюда
 
   const handleSubmit = async (e) => {
     e.preventDefault();
