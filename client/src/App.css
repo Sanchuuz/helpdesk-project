@@ -1,3 +1,8 @@
+/* Добавим плавности всему приложению */
+* {
+  transition: background-color 0.3s ease;
+}
+
 .container {
   max-width: 600px;
   margin: 40px auto;
@@ -52,13 +57,14 @@
   background: #1d4ed8;
 }
 
+/* Сделаем карточки чуть более стильными */
 .ticket-card {
   background: white;
-  border: 1px solid #e5e7eb;
-  padding: 16px;
-  border-radius: 8px;
-  margin-top: 12px;
-  transition: transform 0.1s;
+  border: 1px solid #f3f4f6; /* Более мягкая граница */
+  padding: 20px;
+  border-radius: 16px; /* Более скругленные углы */
+  margin-top: 15px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 .ticket-card:hover {
@@ -116,4 +122,20 @@
   margin-bottom: 50px;
   padding-top: 20px;
   border-top: 2px dashed #f3f4f6;
+}
+
+/* Красивый эффект для кнопки удаления */
+.delete-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.delete-btn:hover {
+  color: #ef4444;
+  background: #fee2e2;
 }

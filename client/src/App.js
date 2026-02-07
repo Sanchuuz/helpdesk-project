@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { PlusCircle, ClipboardList, Trash2 } from 'lucide-react';
+import { PlusCircle, ClipboardList, Trash2, Frown } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import './App.css'; // Импортируем наши новые стили
 
 function App() {
@@ -129,40 +130,52 @@ function App() {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
 
-        <h2>Список заявок ({filteredTickets.length})</h2>
-        {filteredTickets.map((ticket) => (
-          <div key={ticket._id} className="ticket-card">
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'start',
-              }}
-            >
-              <div>
-                <span className={`badge priority-${ticket.priority}`}>
-                  {ticket.priority}
-                </span>
-                <h4 style={{ margin: '8px 0' }}>{ticket.title}</h4>
-                <p style={{ color: '#6b7280', fontSize: '14px' }}>
-                  {ticket.description}
-                </p>
-              </div>
-              <button
-                onClick={() => deleteTicket(ticket._id)}
-                className="delete-btn"
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  color: '#9ca3af',
-                }}
-              >
-                <Trash2 size={20} />
-              </button>
-            </div>
+        <div className="list-section">
+          <h2>Список заявок ({filteredTickets.length})</h2>
+
+          <div className="tickets-grid">
+            {' '}
+            {/* Добавим обертку для сетки */}
+            <AnimatePresence>
+              {filteredTickets.map((ticket) => (
+                <motion.div
+                  key={ticket._id}
+                  layout // Это зааставит остальные карточки плавно раздвигаться
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ duration: 0.3 }}
+                  className="ticket-card"
+                >
+                  {/* Тут всё твое содержимое карточки (badge, title, описание, кнопка) */}
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'start',
+                    }}
+                  >
+                    <div>
+                      <span className={`badge priority-${ticket.priority}`}>
+                        {ticket.priority}
+                      </span>
+                      <h4 style={{ margin: '8px 0' }}>{ticket.title}</h4>
+                      <p style={{ color: '#6b7280', fontSize: '14px' }}>
+                        {ticket.description}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => deleteTicket(ticket._id)}
+                      className="delete-btn"
+                    >
+                      <Trash2 size={20} />
+                    </button>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
-        ))}
+        </div>
       </div>
     </div>
   );
