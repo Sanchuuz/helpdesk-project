@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { PlusCircle, ClipboardList, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import './App.css'; // Импортируем наши новые стили
+import './App.css';
 
 function App() {
-  const API_URL = 'https://helpdesk-project-djbn.onrender.com/api/tickets';
+  // Автоматическое переключение URL между локалкой и облаком
+  const API_URL =
+    window.location.hostname === 'localhost'
+      ? 'http://localhost:5000/api/tickets'
+      : 'https://helpdesk-project-djbn.onrender.com/api/tickets';
 
   const [tickets, setTickets] = useState([]);
   const [title, setTitle] = useState('');
@@ -16,27 +20,18 @@ function App() {
     try {
       const response = await fetch(API_URL);
       const data = await response.json();
-      setTickets(data);
+
+      if (Array.isArray(data)) {
+        // Сортировка: новые в начало
+        setTickets([...data].reverse());
+      } else {
+        setTickets([]);
+      }
     } catch (error) {
-      console.error('Ошибка при получении данных:', error);
+      console.error('Ошибка получения данных:', error);
+      setTickets([]);
     }
   };
-
-  // Фильтруем список в зависимости от того, что введено в поиск
-  const filteredTickets = tickets.filter((ticket) =>
-    ticket.title.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
-
-  // Фильтруем массив, чтобы посчитать количество по категориям
-  const highPriorityCount = filteredTickets.filter(
-    (t) => t.priority === 'High',
-  ).length;
-  const mediumPriorityCount = filteredTickets.filter(
-    (t) => t.priority === 'Medium',
-  ).length;
-  const lowPriorityCount = filteredTickets.filter(
-    (t) => t.priority === 'Low',
-  ).length;
 
   useEffect(() => {
     fetchTickets();
@@ -56,17 +51,29 @@ function App() {
         fetchTickets();
       }
     } catch (error) {
-      alert('Ошибка сервера');
+      alert('Ошибка при создании заявки');
     }
   };
 
   const deleteTicket = async (id) => {
     if (window.confirm('Удалить заявку?')) {
-      await fetch(`${API_URL}/${id}`, {
-        method: 'DELETE',
-      });
-      fetchTickets();
+      try {
+        await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+        fetchTickets();
+      } catch (error) {
+        alert('Ошибка при удалении');
+      }
     }
+  };
+
+  const filteredTickets = tickets.filter((ticket) =>
+    ticket.title.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
+
+  const stats = {
+    high: filteredTickets.filter((t) => t.priority === 'High').length,
+    medium: filteredTickets.filter((t) => t.priority === 'Medium').length,
+    low: filteredTickets.filter((t) => t.priority === 'Low').length,
   };
 
   return (
@@ -78,15 +85,15 @@ function App() {
 
       <div className="stats-container">
         <div className="stat-card" style={{ borderTop: '4px solid #ef4444' }}>
-          <span className="stat-number">{highPriorityCount}</span>
+          <span className="stat-number">{stats.high}</span>
           <span className="stat-label">Срочных</span>
         </div>
         <div className="stat-card" style={{ borderTop: '4px solid #f59e0b' }}>
-          <span className="stat-number">{mediumPriorityCount}</span>
+          <span className="stat-number">{stats.medium}</span>
           <span className="stat-label">Средних</span>
         </div>
         <div className="stat-card" style={{ borderTop: '4px solid #6b7280' }}>
-          <span className="stat-number">{lowPriorityCount}</span>
+          <span className="stat-number">{stats.low}</span>
           <span className="stat-label">Низких</span>
         </div>
       </div>
@@ -123,58 +130,48 @@ function App() {
 
       <div className="list-section">
         <input
-          className="input-field"
+          className="input-field search-bar"
           style={{ marginBottom: '15px', borderColor: '#2563eb' }}
           placeholder="Поиск по названию..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
 
-        <div className="list-section">
-          <h2>Список заявок ({filteredTickets.length})</h2>
+        <h2>Список заявок ({filteredTickets.length})</h2>
 
-          <div className="tickets-grid">
-            {' '}
-            {/* Добавим обертку для сетки */}
-            <AnimatePresence>
-              {filteredTickets.map((ticket) => (
-                <motion.div
-                  key={ticket._id}
-                  layout // Это зааставит остальные карточки плавно раздвигаться
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.3 }}
-                  className="ticket-card"
-                >
-                  {/* Тут всё твое содержимое карточки (badge, title, описание, кнопка) */}
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'start',
-                    }}
-                  >
-                    <div>
-                      <span className={`badge priority-${ticket.priority}`}>
-                        {ticket.priority}
-                      </span>
-                      <h4 style={{ margin: '8px 0' }}>{ticket.title}</h4>
-                      <p style={{ color: '#6b7280', fontSize: '14px' }}>
-                        {ticket.description}
-                      </p>
-                    </div>
+        <div className="tickets-grid">
+          <AnimatePresence>
+            {filteredTickets.map((ticket) => (
+              <motion.div
+                key={ticket._id}
+                layout
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ duration: 0.2 }}
+                className="ticket-card"
+              >
+                <div className="ticket-content">
+                  <div className="ticket-header">
+                    <span className={`badge priority-${ticket.priority}`}>
+                      {ticket.priority}
+                    </span>
                     <button
                       onClick={() => deleteTicket(ticket._id)}
                       className="delete-btn"
                     >
-                      <Trash2 size={20} />
+                      <Trash2 size={18} />
                     </button>
                   </div>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
+                  <h4>{ticket.title}</h4>
+                  <p>{ticket.description}</p>
+                </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+          {filteredTickets.length === 0 && (
+            <p className="empty-message">Заявок пока нет...</p>
+          )}
         </div>
       </div>
     </div>
