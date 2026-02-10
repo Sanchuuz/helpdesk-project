@@ -19,12 +19,9 @@ const MONGO_URI =
   process.env.MONGO_URI ||
   'mongodb+srv://alejnikaleksandr71_db_user:miredmi9t@cluster0.ferjubc.mongodb.net/helpdesk?appName=Cluster0';
 
-mongoose
-  .connect(MONGO_URI)
-  .then(() => console.log('✅ Успешное подключение к MongoDB'))
-  .catch((err) => {
-    console.error('❌ Ошибка подключения к базе:', err.message);
-  });
+mongoose.connect(MONGO_URI).catch((err) => {
+  console.error('❌ Ошибка подключения к базе:', err.message);
+});
 
 // Тестовый маршрут
 app.get('/', (req, res) => {
@@ -66,8 +63,4 @@ app.delete('/api/tickets/:id', async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: 'Ошибка при удалении' });
   }
-});
-
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 Сервер запущен на порту ${PORT}`);
 });
