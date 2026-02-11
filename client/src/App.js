@@ -45,6 +45,27 @@ function App() {
     }
   };
 
+  const updateTicketStatus = async (id, newStatus) => {
+    try {
+      const response = await fetch(
+        `https://helpdesk-project-djbn.onrender.com/api/tickets/${id}`,
+        {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: newStatus }),
+        },
+      );
+
+      if (response.ok) {
+        const updatedTicket = await response.json();
+        // Обновляем состояние в React, чтобы иконка/текст изменились сразу
+        setTickets(tickets.map((t) => (t._id === id ? updatedTicket : t)));
+      }
+    } catch (error) {
+      console.error('Ошибка при обновлении статуса:', error);
+    }
+  };
+
   const deleteTicket = async (id) => {
     if (window.confirm('Удалить заявку?')) {
       try {
@@ -146,6 +167,12 @@ function App() {
                     <span className={`badge priority-${ticket.priority}`}>
                       {ticket.priority}
                     </span>
+                    {/* Добавим отображение текущего статуса рядом с приоритетом */}
+                    <span
+                      className={`badge status-${ticket.status?.replace(' ', '-')}`}
+                    >
+                      {ticket.status}
+                    </span>
                     <button
                       onClick={() => deleteTicket(ticket._id)}
                       className="delete-btn"
@@ -155,6 +182,43 @@ function App() {
                   </div>
                   <h4>{ticket.title}</h4>
                   <p>{ticket.description}</p>
+                  {/* Пример простой логики кнопок */}
+                  <div className="flex gap-2 mt-4">
+                    {ticket.status === 'New' && (
+                      <button
+                        onClick={() =>
+                          updateTicketStatus(ticket._id, 'In Progress')
+                        }
+                        style={{
+                          backgroundColor: '#2563eb',
+                          color: 'white',
+                          padding: '5px 10px',
+                          borderRadius: '5px',
+                          border: 'none',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        В работу
+                      </button>
+                    )}
+                    {ticket.status === 'In Progress' && (
+                      <button
+                        onClick={() =>
+                          updateTicketStatus(ticket._id, 'Completed')
+                        }
+                        style={{
+                          backgroundColor: '#10b981',
+                          color: 'white',
+                          padding: '5px 10px',
+                          borderRadius: '5px',
+                          border: 'none',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        Завершить
+                      </button>
+                    )}
+                  </div>
                 </div>
               </motion.div>
             ))}
