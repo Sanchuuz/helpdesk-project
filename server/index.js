@@ -55,6 +55,29 @@ app.get('/api/tickets', async (req, res) => {
   }
 });
 
+// Маршрут для ОБНОВЛЕНИЯ заявки (например, смена статуса)
+app.put('/api/tickets/:id', async (req, res) => {
+  try {
+    const { status } = req.body;
+
+    // { new: true} вернет нам уже обновленный объект из базы
+    const updatedTicket = await Ticket.findByIdAndUpdate(
+      req.params.id,
+      { status },
+      { new: true },
+    );
+
+    if (!updatedTicket) {
+      return res.status(404).json({ message: 'Заявка не найдена' });
+    }
+
+    res.json(updatedTicket);
+  } catch (error) {
+    console.error('Ошибка при обновлении:', error);
+    res.status(500).json({ message: 'Ошибка сервера при обновлении' });
+  }
+});
+
 // Маршрут для удаления заявки
 app.delete('/api/tickets/:id', async (req, res) => {
   try {
