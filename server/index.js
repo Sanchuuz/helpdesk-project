@@ -87,3 +87,7 @@ app.delete('/api/tickets/:id', async (req, res) => {
     res.status(500).json({ message: 'Ошибка при удалении' });
   }
 });
+
+app.listen(PORT, () => {
+  console.log(`Сервер запущен на порту ${PORT}`);
+});
