@@ -157,3 +157,108 @@
   color: #065f46;
   border: 1px solid #a7f3d0;
 }
+
+/* Кнопки фильтрации */
+.filter-buttons {
+  margin-bottom: 20px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid #2563eb;
+  background-color: transparent;
+  color: #2563eb;
+  cursor: pointer;
+  transition: 0.3s;
+  font-weight: 500;
+}
+
+.filter-btn.active {
+  background-color: #2563eb;
+  color: white;
+}
+
+/* Кнопки действий внутри карточки */
+.btn-work,
+.btn-done {
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: opacity 0.2s;
+}
+
+.btn-work {
+  background-color: #2563eb;
+}
+.btn-done {
+  background-color: #10b981;
+}
+
+.btn-work:hover,
+.btn-done:hover {
+  opacity: 0.85;
+}
+
+/* Вспомогательные классы для сетки и отступов */
+.flex {
+  display: flex;
+}
+.gap-2 {
+  gap: 8px;
+}
+.mt-4 {
+  margin-top: 16px;
+}
+
+.search-bar {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  margin-bottom: 15px;
+  box-sizing: border-box;
+}
+
+.search-bar:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+}
+
+/* Состояние "Пусто" */
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  grid-column: 1 / -1;
+  color: #64748b;
+  background: #f9fafb;
+  border-radius: 12px;
+  border: 2px dashed #e5e7eb;
+}
+
+/* Сетка карточек */
+.tickets-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.ticket-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.header-badges {
+  display: flex;
+  gap: 8px;
+}
