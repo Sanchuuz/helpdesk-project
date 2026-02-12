@@ -11,6 +11,7 @@ function App() {
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState('Medium');
   const [searchTerm, setSearchTerm] = useState('');
+  const [filterStatus, setFilterStatus] = useState('All');
 
   const fetchTickets = useCallback(async () => {
     try {
@@ -77,9 +78,16 @@ function App() {
     }
   };
 
-  const filteredTickets = tickets.filter((ticket) =>
-    ticket.title.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+  const filteredTickets = tickets.filter((ticket) => {
+    const matchesSearch =
+      ticket.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      ticket.description.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesStatus =
+      filterStatus === 'All' || ticket.status === filterStatus;
+
+    return matchesSearch && matchesStatus;
+  });
 
   const stats = {
     high: filteredTickets.filter((t) => t.priority === 'High').length,
@@ -147,6 +155,42 @@ function App() {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
+
+        <div
+          className="filter-buttons"
+          style={{
+            marginBottom: '20px',
+            display: 'flex',
+            gap: '10px',
+            flexWrap: 'wrap',
+          }}
+        >
+          {['All', 'New', 'In Progress', 'Completed'].map((status) => (
+            <button
+              key={status}
+              onClick={() => setFilterStatus(status)}
+              className={`filter-btn ${filterStatus === status ? 'active' : ''}`}
+              style={{
+                padding: '8px 16px',
+                borderRadius: '20px',
+                border: '1px solid #2563eb',
+                backgroundColor:
+                  filterStatus === status ? '#2563eb' : 'transparent',
+                color: filterStatus === status ? 'white' : '#2563eb',
+                cursor: 'pointer',
+                transition: '0.3s',
+              }}
+            >
+              {status === 'All'
+                ? 'Все'
+                : status === 'New'
+                  ? 'Новые'
+                  : status === 'In Progress'
+                    ? 'В работе'
+                    : 'Завершенные'}
+            </button>
+          ))}
+        </div>
 
         <h2>Список заявок ({filteredTickets.length})</h2>
 
