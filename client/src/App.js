@@ -267,8 +267,41 @@ function App() {
               </motion.div>
             ))}
           </AnimatePresence>
+
+          {/* НОВЫЙ БЛОК: если ничего не найдено */}
           {filteredTickets.length === 0 && (
-            <p className="empty-message">Заявок пока нет...</p>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="empty-state"
+              style={{
+                textAlign: 'center',
+                padding: '40px',
+                gridColumn: '1 / -1', // растянуть на всю сетку
+                color: '#64748b',
+              }}
+            >
+              <div style={{ fontSize: '48px', marginBottom: '10px' }}>🔍</div>
+              <h3>Ничего не найдено</h3>
+              <p>Попробуйте изменить параметры поиска или фильтр</p>
+              {/* Кнопка сброса для удобства */}
+              <button
+                onClick={() => {
+                  setSearchTerm('');
+                  setFilterStatus('All');
+                }}
+                style={{
+                  marginTop: '15px',
+                  background: 'none',
+                  border: 'none',
+                  color: '#2563eb',
+                  textDecoration: 'underline',
+                  cursor: 'pointer',
+                }}
+              >
+                Сбросить все фильтры
+              </button>
+            </motion.div>
           )}
         </div>
       </div>
