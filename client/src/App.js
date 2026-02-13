@@ -60,11 +60,57 @@ function App() {
       (search.status === 'All' || t.status === search.status),
   );
 
+  // Считаем количество по приоритетам
+  const stats = {
+    high: filtered.filter((t) => t.priority === 'High').length,
+    medium: filtered.filter((t) => t.priority === 'Medium').length,
+    low: filtered.filter((t) => t.priority === 'Low').length,
+  };
+
+  // Считаем общий прогресс (процент выполненных)
+  const total = filtered.length;
+  const completed = filtered.filter((t) => t.status === 'Completed').length;
+  const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
+
   return (
     <div className="container">
       <header className="header">
         <ClipboardList size={32} /> <h1>Helpdesk System</h1>
       </header>
+
+      <div className="analytics-section">
+        {/* Полоса прогресса */}
+        <div className="progress-container">
+          <div className="progress-label">
+            <span>Прогресс выполнения</span>
+            <span>{progress}%</span>
+          </div>
+          <div className="progress-bar-bg">
+            <motion.div
+              className="progress-bar-fill"
+              initial={{ width: 0 }}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 1 }}
+            />
+          </div>
+        </div>
+
+        {/* Карточки счетчиков */}
+        <div className="stats-grid">
+          <div className="stat-item high">
+            <span className="count">{stats.high}</span>
+            <span className="label">Срочные</span>
+          </div>
+          <div className="stat-item medium">
+            <span className="count">{stats.medium}</span>
+            <span className="label">Средние</span>
+          </div>
+          <div className="stat-item low">
+            <span className="count">{stats.low}</span>
+            <span className="label">Низкие</span>
+          </div>
+        </div>
+      </div>
 
       {/* Форма */}
       <form className="ticket-form" onSubmit={handleSubmit}>
@@ -128,7 +174,7 @@ function App() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="ticket-card"
+                className={`ticket-card ${t.status === 'Completed' ? 'completed' : ''}`}
               >
                 <div className="ticket-header">
                   <span className={`badge priority-${t.priority}`}>

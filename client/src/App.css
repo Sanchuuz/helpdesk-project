@@ -262,3 +262,74 @@
   display: flex;
   gap: 8px;
 }
+
+.analytics-section {
+  margin-bottom: 30px;
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+}
+
+.progress-container {
+  margin-bottom: 20px;
+}
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.progress-bar-bg {
+  height: 10px;
+  background: #f3f4f6;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #2563eb, #10b981);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+.stat-item {
+  text-align: center;
+  padding: 10px;
+  border-radius: 8px;
+  background: #f9fafb;
+}
+
+.stat-item.high {
+  border-bottom: 3px solid #ef4444;
+}
+.stat-item.medium {
+  border-bottom: 3px solid #f59e0b;
+}
+.stat-item.low {
+  border-bottom: 3px solid #6b7280;
+}
+
+.stat-item .count {
+  display: block;
+  font-size: 20px;
+  font-weight: 700;
+}
+.stat-item .label {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* Эффект для завершенных карточек */
+.ticket-card.completed {
+  opacity: 0.6;
+  filter: grayscale(0.5);
+  border-style: dashed;
+}
