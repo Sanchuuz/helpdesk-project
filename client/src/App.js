@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { PlusCircle, ClipboardList, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { formatDistanceToNow } from 'date-fns';
+import { ru } from 'date-fns/locale';
 import './App.css';
 
 const API_URL = 'https://helpdesk-project-djbn.onrender.com/api/tickets';
@@ -194,6 +196,13 @@ function App() {
                 </div>
                 <h4>{t.title}</h4>
                 <p>{t.description}</p>
+                <div className="ticket-date">
+                  {t.createdAt &&
+                    formatDistanceToNow(new Date(t.createdAt), {
+                      addSuffix: true,
+                      locale: ru,
+                    })}
+                </div>
                 <div className="flex gap-2 mt-4">
                   {t.status === 'New' && (
                     <button

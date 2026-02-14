@@ -333,3 +333,15 @@
   filter: grayscale(0.5);
   border-style: dashed;
 }
+
+.ticket-date {
+  font-size: 11px;
+  color: #9ca3af;
+  margin-top: 8px;
+  font-style: italic;
+}
+
+.ticket-date::before {
+  content: '🕒 ';
+  font-style: normal;
+}
