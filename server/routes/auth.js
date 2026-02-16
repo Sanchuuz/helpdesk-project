@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
+const jwt = require('jsonwebtoken');
 
 // МАРШРУТ РЕГИСТРАЦИИ: /api/auth/register
 router.post('/register', async (req, res) => {
@@ -32,6 +33,34 @@ router.post('/register', async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Ошибка сервера при регистрации' });
+  }
+});
+
+// МАРШРУТ ЛОГИНА: /api/auth/login
+router.post('/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // 1. Ищем пользователя
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: 'Неверные данные для входа' });
+    }
+
+    // 2. Проверяем пароль (сравниваем обычный текст и хеш из базы)
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Неверные данные для входа' });
+    }
+
+    // 3. Создаем JWT токен (валиден, например, 1 час)
+    const token = jwt.sign({ userId: user._id }, 'super_secret_key_123', {
+      expiresIn: '1h',
+    });
+
+    res.json({ token, userId: user._id });
+  } catch (error) {
+    res.status(500).json({ message: 'Ошибка сервера при входе' });
   }
 });
 
