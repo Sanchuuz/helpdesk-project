@@ -48,7 +48,12 @@ const Register = () => {
           required
         />
         <button type="submit">Зарегистрироваться</button>
-        <p onClick={() => navigate('/login')}>Уже есть аккаунт? Войти</p>
+        <p
+          onClick={() => navigate('/login')}
+          style={{ cursor: 'pointer', color: '#3b82f6' }}
+        >
+          Уже есть аккаунт? Войти
+        </p>
       </form>
     </motion.div>
   );
