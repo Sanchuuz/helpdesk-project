@@ -7,6 +7,7 @@ import {
 import Login from './Login';
 import Register from './Register';
 import Home from './Home';
+import ProtectedRoute from './ProtectedRoute';
 import './App.css';
 
 function App() {
@@ -21,7 +22,14 @@ function App() {
           <Route path="/login" element={<Login />} />
 
           {/* Главная страница с тикетами */}
-          <Route path="/" element={<Home />} />
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Если ввели непонятно что — кидаем на главную */}
           <Route path="*" element={<Navigate to="/" />} />

@@ -11,13 +11,17 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(
+      const response = await axios.post(
         'https://helpdesk-project-djbn.onrender.com/api/auth/login',
         {
           email,
           password,
         },
       );
+
+      const { token } = response.data;
+      localStorage.setItem('token', token);
+
       alert('Вход выполнен!');
       navigate('/');
     } catch (err) {
