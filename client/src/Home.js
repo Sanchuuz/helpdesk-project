@@ -1,20 +1,29 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { PlusCircle, ClipboardList, Trash2 } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+// Добавили LogOut в импорт иконок
+import { PlusCircle, ClipboardList, Trash2, LogOut } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { formatDistanceToNow } from 'date-fns';
 import { ru } from 'date-fns/locale';
+import { useNavigate } from 'react-router-dom';
 import './App.css';
 
 const API_URL = 'https://helpdesk-project-djbn.onrender.com/api/tickets';
 
 const Home = () => {
   const [tickets, setTickets] = useState([]);
+  const navigate = useNavigate(); // Инициализируем навигацию
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     priority: 'Medium',
   });
   const [search, setSearch] = useState({ term: '', status: 'All' });
+
+  // Функция для выхода из системы
+  const handleLogout = () => {
+    localStorage.removeItem('token'); // Удаляем ключ доступа
+    navigate('/login'); // Отправляем на страницу входа
+  };
 
   const apiCall = useCallback(async (url, method = 'GET', body = null) => {
     try {
@@ -73,8 +82,38 @@ const Home = () => {
 
   return (
     <div className="container">
-      <header className="header">
-        <ClipboardList size={32} /> <h1>Helpdesk System</h1>
+      {/* Обновленный хедер с кнопкой выхода */}
+      <header
+        className="header"
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          width: '100%',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <ClipboardList size={32} />
+          <h1>Helpdesk System</h1>
+        </div>
+        <button
+          onClick={handleLogout}
+          className="logout-btn"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '8px 16px',
+            backgroundColor: '#ff4d4d',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            fontWeight: 'bold',
+          }}
+        >
+          <LogOut size={18} /> Выйти
+        </button>
       </header>
 
       <div className="analytics-section">
