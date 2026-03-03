@@ -4,6 +4,7 @@ const cors = require('cors');
 const Ticket = require('./models/Ticket');
 const User = require('./models/User');
 const authRoutes = require('./routes/auth');
+const auth = require('../middleware/auth');
 require('dotenv').config();
 
 const app = express();
@@ -32,10 +33,15 @@ app.get('/', (req, res) => {
 });
 
 // Маршрут для СОЗДАНИЯ заявки
-app.post('/api/tickets', async (req, res) => {
+app.post('/api/tickets', auth, async (req, res) => {
   try {
     const { title, description, priority } = req.body;
-    const newTicket = new Ticket({ title, description, priority });
+    const newTicket = new Ticket({
+      title,
+      description,
+      priority,
+      user: req.user.userId,
+    });
     await newTicket.save();
     res.status(201).json(newTicket);
   } catch (error) {
@@ -45,10 +51,12 @@ app.post('/api/tickets', async (req, res) => {
 });
 
 // Маршрут для ПОЛУЧЕНИЯ всех заявок (с сортировкой)
-app.get('/api/tickets', async (req, res) => {
+app.get('/api/tickets', auth, async (req, res) => {
   try {
     // Сортируем по дате создания: самые новые — вверху
-    const tickets = await Ticket.find().sort({ createdAt: -1 });
+    const tickets = await Ticket.find({ user: req.user.userId }).sort({
+      createdAt: -1,
+    });
     res.json(tickets);
   } catch (error) {
     console.error('Ошибка при получении:', error);
@@ -59,13 +67,13 @@ app.get('/api/tickets', async (req, res) => {
 });
 
 // Маршрут для ОБНОВЛЕНИЯ заявки (например, смена статуса)
-app.put('/api/tickets/:id', async (req, res) => {
+app.put('/api/tickets/:id', auth, async (req, res) => {
   try {
     const { status } = req.body;
 
     // { new: true} вернет нам уже обновленный объект из базы
-    const updatedTicket = await Ticket.findByIdAndUpdate(
-      req.params.id,
+    const updatedTicket = await Ticket.findOneAndUpdate(
+      { _id: req.params.id, user: req.user.userId },
       { status },
       { new: true },
     );
@@ -82,9 +90,17 @@ app.put('/api/tickets/:id', async (req, res) => {
 });
 
 // Маршрут для удаления заявки
-app.delete('/api/tickets/:id', async (req, res) => {
+app.delete('/api/tickets/:id', auth, async (req, res) => {
+  // <-- 5. ДОБАВИЛИ AUTH
   try {
-    await Ticket.findByIdAndDelete(req.params.id);
+    const deletedTicket = await Ticket.findOneAndDelete({
+      _id: req.params.id,
+      user: req.user.userId,
+    });
+
+    if (!deletedTicket) {
+      return res.status(404).json({ message: 'Заявка не найдена' });
+    }
     res.json({ message: 'Заявка удалена' });
   } catch (error) {
     res.status(500).json({ message: 'Ошибка при удалении' });

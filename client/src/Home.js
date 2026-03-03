@@ -25,19 +25,37 @@ const Home = () => {
     navigate('/login'); // Отправляем на страницу входа
   };
 
-  const apiCall = useCallback(async (url, method = 'GET', body = null) => {
-    try {
-      const res = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: body ? JSON.stringify(body) : null,
-      });
-      return res.ok ? await res.json() : null;
-    } catch (e) {
-      console.error(e);
-      return null;
-    }
-  }, []);
+  const apiCall = useCallback(
+    async (url, method = 'GET', body = null) => {
+      try {
+        // 1. Достаем токен прямо перед запросом
+        const token = localStorage.getItem('token');
+
+        const res = await fetch(url, {
+          method,
+          headers: {
+            'Content-Type': 'application/json',
+            // 2. Добавляем заголовок авторизации
+            Authorization: token ? `Bearer ${token}` : '',
+          },
+          body: body ? JSON.stringify(body) : null,
+        });
+
+        // 3. Если сервер ответил 401 (токен протух или неверный), выкидываем на логин
+        if (res.status === 401) {
+          localStorage.removeItem('token');
+          navigate('/login');
+          return null;
+        }
+
+        return res.ok ? await res.json() : null;
+      } catch (e) {
+        console.error(e);
+        return null;
+      }
+    },
+    [navigate],
+  );
 
   const refresh = useCallback(async () => {
     const data = await apiCall(API_URL);

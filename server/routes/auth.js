@@ -54,7 +54,7 @@ router.post('/login', async (req, res) => {
     }
 
     // 3. Создаем JWT токен (валиден, например, 1 час)
-    const token = jwt.sign({ userId: user._id }, 'super_secret_key_123', {
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
       expiresIn: '1h',
     });
 
