@@ -4,7 +4,7 @@ const cors = require('cors');
 const Ticket = require('./models/Ticket');
 const User = require('./models/User');
 const authRoutes = require('./routes/auth');
-const auth = require('../middleware/auth');
+const auth = require('./middleware/auth');
 require('dotenv').config();
 
 const app = express();
