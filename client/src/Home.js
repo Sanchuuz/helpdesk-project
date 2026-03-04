@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { formatDistanceToNow } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import './App.css';
 
 const API_URL = 'https://helpdesk-project-djbn.onrender.com/api/tickets';
@@ -12,6 +13,7 @@ const API_URL = 'https://helpdesk-project-djbn.onrender.com/api/tickets';
 const Home = () => {
   const [tickets, setTickets] = useState([]);
   const navigate = useNavigate(); // Инициализируем навигацию
+  const userEmail = localStorage.getItem('userEmail');
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -63,14 +65,23 @@ const Home = () => {
   }, [apiCall]);
 
   useEffect(() => {
-    refresh();
-  }, [refresh]);
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login'); // Если токена нет, отправляем на вход
+    } else {
+      refresh();
+    }
+  }, [refresh, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (await apiCall(API_URL, 'POST', formData)) {
+    const success = await apiCall(API_URL, 'POST', formData);
+    if (success) {
       setFormData({ title: '', description: '', priority: 'Medium' });
       refresh();
+      toast.success('Заявка создана! 🚀');
+    } else {
+      toast.error('Не удалось создать заявку ❌');
     }
   };
 
@@ -113,6 +124,9 @@ const Home = () => {
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <ClipboardList size={32} />
           <h1>Helpdesk System</h1>
+          <p style={{ fontSize: '14px', color: '#666', margin: 0 }}>
+            Вы вошли как: <strong>{userEmail}</strong>
+          </p>
         </div>
         <button
           onClick={handleLogout}
@@ -240,7 +254,12 @@ const Home = () => {
                   <Trash2
                     className="delete-btn"
                     onClick={() =>
-                      apiCall(`${API_URL}/${t._id}`, 'DELETE').then(refresh)
+                      apiCall(`${API_URL}/${t._id}`, 'DELETE').then((res) => {
+                        if (res) {
+                          refresh();
+                          toast.info('Заявка удалена');
+                        }
+                      })
                     }
                   />
                 </div>

@@ -21,6 +21,7 @@ const Login = () => {
 
       const { token } = response.data;
       localStorage.setItem('token', token);
+      localStorage.setItem('userEmail', email);
 
       alert('Вход выполнен!');
       navigate('/');

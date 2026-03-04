@@ -8,7 +8,9 @@ import Login from './Login';
 import Register from './Register';
 import Home from './Home';
 import ProtectedRoute from './ProtectedRoute';
+import { ToastContainer } from 'react-toastify';
 import './App.css';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
@@ -34,6 +36,7 @@ function App() {
           {/* Если ввели непонятно что — кидаем на главную */}
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
+        <ToastContainer position="bottom-right" theme="colored" />
       </div>
     </Router>
   );
